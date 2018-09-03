@@ -1,0 +1,17 @@
+opam-version: "1.2"
+name: "iso-639"
+author: "Petter A. Urkedal <paurkedal@gmail.com>"
+maintainer: "Petter A. Urkedal <paurkedal@gmail.com>"
+license: "LGPL-3 with OCaml linking exception"
+homepage: "https://github.com/paurkedal/ocaml-iso-639/"
+bug-reports: "https://github.com/paurkedal/ocaml-iso-639/issues"
+dev-repo: "https://github.com/paurkedal/ocaml-iso-639.git"
+doc: "http://paurkedal.github.io/ocaml-iso-639/index.html"
+
+build: ["dune" "build" "-p" name "-j" jobs]
+build-test: ["dune" "runtest" "-p" name "-j" jobs]
+
+depends: [
+  "dune"
+  "ocamlfind" {build}
+]

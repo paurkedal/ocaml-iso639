@@ -1,0 +1,50 @@
+(library
+  (name iso639)
+  (public_name iso-639)
+  (modules Iso639 Data))
+
+(rule
+  (targets data.ml)
+  (deps
+    (:tab2 iso-639-2.txt)
+    (:tab3 iso-639-3.tsv)
+    (:tab5 iso-639-5.tsv)
+    (:gen gen_data.ml))
+  (action (with-stdout-to %{targets}
+    (run %{ocaml} %{gen} %{tab2} %{tab3} %{tab5}))))
+
+; ISO 692-2 Data
+(rule
+  (targets iso-639-2.txt)
+  (mode fallback)
+  (action
+    (run wget --quiet -O %{targets}
+      "https://www.loc.gov/standards/iso639-2/ISO-639-2_utf-8.txt")))
+
+; ISO 693-3 Data
+(rule
+  (targets iso-639-3.tsv)
+  (mode fallback)
+  (action
+    (run wget --quiet -O %{targets}
+      "https://iso639-3.sil.org/sites/iso639-3/files/downloads/iso-639-3.tab")))
+(rule
+  (targets iso-639-3-macrolanguages.tsv)
+  (mode fallback)
+  (action
+    (run wget --quiet -O %{targets}
+      "https://iso639-3.sil.org/sites/iso639-3/files/downloads/iso-639-3-macrolanguages.tab")))
+(rule
+  (targets iso-639-3-retirements.tsv)
+  (mode fallback)
+  (action
+    (run wget --quiet -O %{targets}
+      "https://iso639-3.sil.org/sites/iso639-3/files/downloads/iso-639-3_Retirements.tab")))
+
+; ISO 693-5 Data
+(rule
+  (targets iso-639-5.tsv)
+  (mode fallback)
+  (action
+    (run wget --quiet -O %{targets}
+      "http://id.loc.gov/vocabulary/iso639-5.tsv")))
