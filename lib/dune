@@ -1,6 +1,5 @@
 (library
-  (name iso639)
-  (public_name iso-639)
+  (public_name iso639)
   (modules Iso639 Data))
 
 (rule
