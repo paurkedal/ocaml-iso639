@@ -49,6 +49,10 @@ val to_int : t -> int
 val of_int : int -> t option
 (** [of_int] is the partial inverse of {!to_int}. *)
 
+val of_int_exn : int -> t
+(** [of_int_exn] is the partial inverse of {!to_int}.
+    @raise Invalid_argument if the argument is out of range. *)
+
 val is_iso639p1 : t -> bool
 (** [is_iso639p1 lang] is true iff [lang] is represented in ISO 639-1. *)
 

@@ -24,6 +24,9 @@ let is_valid lang =
 
 let of_int lang = if is_valid lang then Some lang else None
 
+let of_int_exn lang =
+  if is_valid lang then lang else invalid_arg "Iso639.of_int_exn"
+
 let is_iso639p1 x = Data.to_iso639p1 x <> x
 let is_iso639p2 x = Data.is_iso639p2t x
 let is_iso639p3 x = x < 0x8000
