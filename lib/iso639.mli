@@ -109,3 +109,5 @@ val show : t -> string
 val pp : Format.formatter -> t -> unit
 (** [pp ppf lang] prints a human readable representation of [lang] on [ppf],
     using the same representation as {!show}. *)
+
+val scope : t -> [> `Individual | `Macro | `Collective | `Special]

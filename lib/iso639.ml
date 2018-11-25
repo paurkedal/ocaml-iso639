@@ -97,3 +97,5 @@ let show lang =
   if is_part3 lang then s else String.uppercase_ascii s
 
 let pp ppf lang = Format.pp_print_string ppf (show lang)
+
+let scope x = if is_part3 x then Data.lang3_scope x else `Collective

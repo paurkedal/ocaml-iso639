@@ -64,10 +64,10 @@ let gen_is_iso639p3_bits lang3_set =
   end;
   printf "let is_iso639p3_bits = %S\n\n" (Bytes.to_string is_iso639p3_bits)
 
-let gen_predicate fn lang2t_set =
+let gen_predicate fn lang_set =
   printf "let %s = function" fn;
   let index = ref 0 in
-  lang2t_set |> Int_set.iter begin fun lang ->
+  lang_set |> Int_set.iter begin fun lang ->
     if !index mod 8 = 0 then printf "\n";
     printf " | %#x" lang;
     incr index;
@@ -78,6 +78,14 @@ let gen_conversion fn m =
   printf "let %s = function\n" fn;
   Int_map.iter (fun k v -> printf " | %#x -> %#x\n" k v) m;
   printf " | lang -> lang\n\n"
+
+let gen_scope_classifier fn m =
+  printf "let %s = function\n" fn;
+  let ctor_name = function
+   | `Special -> "Special"
+   | `Macro -> "Macro" in
+  Int_map.iter (fun k v -> printf " | %#x -> `%s\n" k (ctor_name v)) m;
+  printf " | _ -> `Individual\n\n"
 
 let alpha_of_int x = Char.chr (x mod 32 + 0x60)
 
@@ -131,6 +139,7 @@ let () =
   let lang_to_lang1_v3 = ref Int_map.empty in
   let lang_to_lang2b_v2 = ref Int_map.empty in
   let lang_to_lang2b_v3 = ref Int_map.empty in
+  let lang3_scope = ref Int_map.empty in
 
   (* Load ISO-639-3 Data *)
   Sys.argv.(2) |> Tsv.iter ~header:header3 begin function
@@ -147,13 +156,19 @@ let () =
            | Some lang1 ->
               lang_to_lang1_v3 := Int_map.add lang2t lang1 !lang_to_lang1_v3)
        | _ -> assert false);
+      (match scope with
+       | "I" -> ()
+       | "S" -> lang3_scope := Int_map.add lang3 `Special !lang3_scope
+       | "M" -> lang3_scope := Int_map.add lang3 `Macro !lang3_scope
+       | _ -> assert false)
    | _ -> assert false
   end;
 
   (* Load ISO-639-5 Data *)
   Sys.argv.(3) |> Tsv.iter ~header:header5 begin function
-   | [_uri; part5; _en; _fr] ->
-      lang5_set := Int_set.add (int_of_alphaN part5 lor 0x8000) !lang5_set
+   | [_uri; part5; en; _fr] ->
+      let lang = int_of_alphaN part5 lor 0x8000 in
+      lang5_set := Int_set.add lang !lang5_set
    | _ -> assert false
   end;
   let lang5_set = !lang5_set in
@@ -203,4 +218,5 @@ let () =
   gen_conversion "to_iso639p2b" lang_to_lang2b;
   gen_conversion "of_iso639p2b" (invert_map lang_to_lang2b);
   gen_conversion "to_iso639p1" lang_to_lang1;
-  gen_conversion "of_iso639p1" (invert_map lang_to_lang1)
+  gen_conversion "of_iso639p1" (invert_map lang_to_lang1);
+  gen_scope_classifier "lang3_scope" !lang3_scope

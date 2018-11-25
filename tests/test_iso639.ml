@@ -31,10 +31,12 @@ let check_alpha3 p2_count p3_count p5_count alpha3 =
    | None, None -> ()
    | Some lang3, None ->
       incr p3_count;
-      assert (Lang.to_part3_string lang3 = Some alpha3)
+      assert (Lang.to_part3_string lang3 = Some alpha3);
+      assert (Lang.scope lang3 <> `Collective)
    | None, Some lang5 ->
       incr p5_count;
-      assert (Lang.to_part5_string lang5 = Some alpha3)
+      assert (Lang.to_part5_string lang5 = Some alpha3);
+      assert (Lang.scope lang5 = `Collective)
    | Some _, Some _ -> assert false);
   (match Lang.of_part2_string alpha3 with
    | Some lang2 ->
@@ -55,6 +57,17 @@ let check_alpha3 p2_count p3_count p5_count alpha3 =
        | Some lang3, Some lang5 -> assert (not (Lang.equal lang3 lang5)))
    | None -> ())
 
+let check_scope () =
+  let chk lang3 scope =
+    let lang =
+      (match Lang.of_part3_string lang3 with
+       | Some lang -> lang
+       | None -> assert false) in
+    assert (Lang.scope lang = scope) in
+  chk "spa" `Individual;
+  chk "nor" `Macro;
+  chk "mis" `Special
+
 let () =
   let p1_count = ref 0 in
   let p2_count = ref 0 in
@@ -72,4 +85,5 @@ let () =
         check_alpha3 p2_count p3_count p5_count alpha3
       done
     done
-  done
+  done;
+  check_scope ()
