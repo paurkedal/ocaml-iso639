@@ -18,28 +18,28 @@ open Printf
 module Lang = Iso639
 
 let check_alpha2 p1_count alpha2 =
-  (match Lang.of_iso639p1 alpha2 with
+  (match Lang.of_part1_string alpha2 with
    | Some lang ->
       incr p1_count;
-      assert (Lang.to_iso639p1 lang = Some alpha2)
+      assert (Lang.to_part1_string lang = Some alpha2)
    | None -> ())
 
 let check_alpha3 p2_count p3_count p5_count alpha3 =
-  let lang3 = Lang.of_iso639p3 alpha3 in
-  let lang5 = Lang.of_iso639p5 alpha3 in
+  let lang3 = Lang.of_part3_string alpha3 in
+  let lang5 = Lang.of_part5_string alpha3 in
   (match lang3, lang5 with
    | None, None -> ()
    | Some lang3, None ->
       incr p3_count;
-      assert (Lang.to_iso639p3 lang3 = Some alpha3)
+      assert (Lang.to_part3_string lang3 = Some alpha3)
    | None, Some lang5 ->
       incr p5_count;
-      assert (Lang.to_iso639p5 lang5 = Some alpha3)
+      assert (Lang.to_part5_string lang5 = Some alpha3)
    | Some _, Some _ -> assert false);
-  (match Lang.of_iso639p2 alpha3 with
+  (match Lang.of_part2_string alpha3 with
    | Some lang2 ->
-      let alpha_p2t = Lang.to_iso639p2t lang2 in
-      let alpha_p2b = Lang.to_iso639p2b lang2 in
+      let alpha_p2t = Lang.to_part2t_string lang2 in
+      let alpha_p2b = Lang.to_part2b_string lang2 in
       let is_bib =
         (match alpha_p2t, alpha_p2b with
          | None, None -> assert false
