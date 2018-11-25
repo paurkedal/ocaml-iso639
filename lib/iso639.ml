@@ -91,3 +91,9 @@ let of_part5_string s =
     if Data.is_iso639p5 lang then Some lang else
     None
   with Not_found -> None
+
+let show lang =
+  let s = to_alpha3 lang in
+  if is_part3 lang then s else String.uppercase_ascii s
+
+let pp ppf lang = Format.pp_print_string ppf (show lang)

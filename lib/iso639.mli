@@ -20,6 +20,9 @@
     ISO 639-5 and provides conversions to and from 2- and 3-letter codes defined
     in parts 1, 2, 3, and 5 of the standard.
 
+    For common use cases part 3 of the standard, which covers individual
+    languages, is a good choice.
+
     The functionality of this module is to large extent derived from:
     - ISO 639-2 data provided by https://www.loc.gov/standards/iso639-2/
     - ISO 639-3 data provided by http://www.iso639-3.sil.org/
@@ -91,3 +94,18 @@ val of_part1_string : string -> t option
 val of_part2_string : string -> t option
 val of_part3_string : string -> t option
 val of_part5_string : string -> t option
+
+val show : t -> string
+(** [show lang] is a human readable representation of [lang] which may change
+    across versions.
+
+    Currently this function represents individual languages by their lower-cased
+    ISO 639-3 codes and language families and groups by their upper-cased ISO
+    639-5 codes.  Since this is somewhat ad-hoc, the representation may still
+    change in a later version, if there is precedence for another convention.
+    So, only use this for human readable output, otherwise use
+    {!to_part3_string} or {!to_part5_string}. *)
+
+val pp : Format.formatter -> t -> unit
+(** [pp ppf lang] prints a human readable representation of [lang] on [ppf],
+    using the same representation as {!show}. *)
