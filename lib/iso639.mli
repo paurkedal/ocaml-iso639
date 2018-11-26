@@ -24,9 +24,9 @@
     languages, is a good choice.
 
     The functionality of this module is to large extent derived from:
-    - ISO 639-2 data provided by https://www.loc.gov/standards/iso639-2/
-    - ISO 639-3 data provided by http://www.iso639-3.sil.org/
-    - ISO 639-5 data provided by https://www.loc.gov/standards/iso639-5/ *)
+    - ISO 639-2 data provided by {{:https://www.loc.gov/standards/iso639-2/}}
+    - ISO 639-3 data provided by {{:http://www.iso639-3.sil.org/}}
+    - ISO 639-5 data provided by {{:https://www.loc.gov/standards/iso639-5/}} *)
 
 type t
 (** This type represents an individual language or macrolanguage from ISO 639-3
