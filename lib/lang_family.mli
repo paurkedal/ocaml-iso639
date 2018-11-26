@@ -14,16 +14,32 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-(** ISO 639 - identification of natural languages and language groups
+(** Language families and groups as identified by ISO 639-5. *)
 
-    The {!Lang} module is a good choice for common use cases where only
-    individual languages and macrolanguages as covered by ISO 369-3 are needed.
+type t
 
-    The functionality of this library is to large extent derived from:
-    - ISO 639-2 data provided by {{:https://www.loc.gov/standards/iso639-2/}}
-    - ISO 639-3 data provided by {{:http://www.iso639-3.sil.org/}}
-    - ISO 639-5 data provided by {{:https://www.loc.gov/standards/iso639-5/}} *)
+val equal : t -> t -> bool
 
-module Lang = Lang
-module Lang_family = Lang_family
-module Lang_or_family = Lang_or_family
+val compare : t -> t -> int
+
+val to_int : t -> int
+
+val of_int : int -> t option
+
+val of_int_exn : int -> t
+
+val of_lang_or_family : Lang_or_family.t -> t option
+
+val to_lang_or_family : t -> Lang_or_family.t
+
+val of_string : string -> t option
+
+val to_string : t -> string
+
+val of_part1_string : string -> t option
+
+val of_part2_string : string -> t option
+
+val to_part2t_string : t -> string option
+
+val to_part2b_string : t -> string option

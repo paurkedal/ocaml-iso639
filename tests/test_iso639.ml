@@ -14,34 +14,50 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
+open Iso639
 open Printf
-module Lang = Iso639
+
+let check_lang lang =
+  assert (Lang.equal (Lang.of_int_exn (Lang.to_int lang)) lang);
+  (match Lang.of_string (Lang.to_string lang) with
+   | None -> assert false
+   | Some lang' -> assert (Lang.equal lang lang'))
+
+let check_lang_family lang =
+  assert (Lang_family.equal (Lang_family.of_int_exn (Lang_family.to_int lang))
+                            lang)
 
 let check_alpha2 p1_count alpha2 =
-  (match Lang.of_part1_string alpha2 with
+  (match Lang_or_family.of_part1_string alpha2 with
    | Some lang ->
       incr p1_count;
-      assert (Lang.to_part1_string lang = Some alpha2)
+      assert (Lang_or_family.to_part1_string lang = Some alpha2)
    | None -> ())
 
 let check_alpha3 p2_count p3_count p5_count alpha3 =
-  let lang3 = Lang.of_part3_string alpha3 in
-  let lang5 = Lang.of_part5_string alpha3 in
-  (match lang3, lang5 with
-   | None, None -> ()
-   | Some lang3, None ->
+  let langI = Lang.of_string alpha3 in
+  let lang3 = Lang_or_family.of_part3_string alpha3 in
+  let langF = Lang_family.of_string alpha3 in
+  let lang5 = Lang_or_family.of_part5_string alpha3 in
+  (match langI, lang3, langF, lang5 with
+   | None, None, None ,None -> ()
+   | Some langI, Some lang3, None, None ->
       incr p3_count;
-      assert (Lang.to_part3_string lang3 = Some alpha3);
-      assert (Lang.scope lang3 <> `Collective)
-   | None, Some lang5 ->
+      assert (Lang_or_family.to_part3_string lang3 = Some alpha3);
+      assert (Lang_or_family.scope lang3 <> `Collective);
+      assert (Lang_or_family.equal (Lang.to_lang_or_family langI) lang3);
+      check_lang langI
+   | None, None, Some langF, Some lang5 ->
       incr p5_count;
-      assert (Lang.to_part5_string lang5 = Some alpha3);
-      assert (Lang.scope lang5 = `Collective)
-   | Some _, Some _ -> assert false);
-  (match Lang.of_part2_string alpha3 with
+      assert (Lang_or_family.to_part5_string lang5 = Some alpha3);
+      assert (Lang_or_family.scope lang5 = `Collective);
+      assert (Lang_or_family.equal (Lang_family.to_lang_or_family langF) lang5);
+      check_lang_family langF
+   | _ -> assert false);
+  (match Lang_or_family.of_part2_string alpha3 with
    | Some lang2 ->
-      let alpha_p2t = Lang.to_part2t_string lang2 in
-      let alpha_p2b = Lang.to_part2b_string lang2 in
+      let alpha_p2t = Lang_or_family.to_part2t_string lang2 in
+      let alpha_p2b = Lang_or_family.to_part2b_string lang2 in
       let is_bib =
         (match alpha_p2t, alpha_p2b with
          | None, None -> assert false
@@ -52,18 +68,19 @@ let check_alpha3 p2_count p3_count p5_count alpha3 =
             alpha3 <> p2t) in
       (match lang3, lang5 with
        | None, None -> assert is_bib
-       | Some lang3, None -> assert (Lang.equal lang2 lang3)
-       | None, Some lang5 -> assert (Lang.equal lang2 lang5)
-       | Some lang3, Some lang5 -> assert (not (Lang.equal lang3 lang5)))
+       | Some langI, None -> assert (Lang_or_family.equal lang2 langI)
+       | None, Some langF -> assert (Lang_or_family.equal lang2 langF)
+       | Some langI, Some langF ->
+          assert (not (Lang_or_family.equal langI langF)))
    | None -> ())
 
 let check_scope () =
-  let chk lang3 scope =
+  let chk langI scope =
     let lang =
-      (match Lang.of_part3_string lang3 with
+      (match Lang_or_family.of_part3_string langI with
        | Some lang -> lang
        | None -> assert false) in
-    assert (Lang.scope lang = scope) in
+    assert (Lang_or_family.scope lang = scope) in
   chk "spa" `Individual;
   chk "nor" `Macro;
   chk "mis" `Special

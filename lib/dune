@@ -1,6 +1,11 @@
 (library
   (public_name iso639)
-  (modules Iso639 Data))
+  (modules
+    Data
+    Lang
+    Lang_family
+    Lang_or_family
+    Iso639))
 
 (rule
   (targets data.ml)

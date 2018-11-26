@@ -14,19 +14,14 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-(** ISO 639 - identification of natural languages and language groups
+(** Individual and collective languages as a unified type.
 
     This module provides a representation of languages covered by ISO 639-3 and
     ISO 639-5 and provides conversions to and from 2- and 3-letter codes defined
     in parts 1, 2, 3, and 5 of the standard.
 
-    For common use cases part 3 of the standard, which covers individual
-    languages, is a good choice.
-
-    The functionality of this module is to large extent derived from:
-    - ISO 639-2 data provided by {{:https://www.loc.gov/standards/iso639-2/}}
-    - ISO 639-3 data provided by {{:http://www.iso639-3.sil.org/}}
-    - ISO 639-5 data provided by {{:https://www.loc.gov/standards/iso639-5/}} *)
+    If you only want to represent individual languages, consider using the
+    {!Lang} module instead. *)
 
 type t
 (** This type represents an individual language or macrolanguage from ISO 639-3
