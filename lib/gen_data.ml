@@ -87,6 +87,15 @@ let gen_scope_classifier fn m =
   Int_map.iter (fun k v -> printf " | %#x -> `%s\n" k (ctor_name v)) m;
   printf " | _ -> `Individual\n\n"
 
+let gen_one_to_many fn m =
+  printf "let %s = function\n" fn;
+  m |> Int_map.iter begin fun k v ->
+    printf " | %#x -> \"" k;
+    v |> List.iter (fun x -> printf "\\x%02x\\x%02x" (x lsr 8) (x land 0xff));
+    printf "\"\n"
+  end;
+  print_string " | _ -> \"\"\n"
+
 let alpha_of_int x = Char.chr (x mod 32 + 0x60)
 
 let int_of_alpha = function
@@ -128,6 +137,7 @@ let header3 = [
   "Id"; "Part2B"; "Part2T"; "Part1"; "Scope";
   "Language_Type"; "Ref_Name"; "Comment";
 ]
+let header3m = ["M_Id"; "I_Id"; "I_Status"]
 let header5 = [
   "URI"; "code"; "Label (English)"; "Label (French)";
 ]
@@ -139,7 +149,9 @@ let () =
   let lang_to_lang1_v3 = ref Int_map.empty in
   let lang_to_lang2b_v2 = ref Int_map.empty in
   let lang_to_lang2b_v3 = ref Int_map.empty in
-  let lang3_scope = ref Int_map.empty in
+  let lang3_scope_map = ref Int_map.empty in
+  let lang3_macrolanguage_map = ref Int_map.empty in
+  let lang3_macrolanguage_members_map = ref Int_map.empty in
 
   (* Load ISO-639-3 Data *)
   Sys.argv.(2) |> Tsv.iter ~header:header3 begin function
@@ -158,14 +170,33 @@ let () =
        | _ -> assert false);
       (match scope with
        | "I" -> ()
-       | "S" -> lang3_scope := Int_map.add lang3 `Special !lang3_scope
-       | "M" -> lang3_scope := Int_map.add lang3 `Macro !lang3_scope
+       | "S" -> lang3_scope_map := Int_map.add lang3 `Special !lang3_scope_map
+       | "M" -> lang3_scope_map := Int_map.add lang3 `Macro !lang3_scope_map
        | _ -> assert false)
+   | _ -> assert false
+  end;
+  let lang3_scope lang =
+    (match Int_map.find lang !lang3_scope_map with
+     | exception Not_found -> `Individual
+     | `Special -> `Special | `Macro -> `Macro)
+  in
+  Sys.argv.(3) |> Tsv.iter ~header:header3m begin function
+   | [sM; sI; ("A" | "R")] ->
+      let langM = int_of_alphaN sM in
+      let langI = int_of_alphaN sI in
+      assert (lang3_scope langM = `Macro);
+      assert (lang3_scope langI = `Individual);
+      assert (not (Int_map.mem langI !lang3_macrolanguage_map));
+      lang3_macrolanguage_map :=
+        Int_map.add langI langM !lang3_macrolanguage_map;
+      let aux = function None -> Some [langI] | Some xs -> Some (langI :: xs) in
+      lang3_macrolanguage_members_map :=
+        Int_map.update langM aux !lang3_macrolanguage_members_map
    | _ -> assert false
   end;
 
   (* Load ISO-639-5 Data *)
-  Sys.argv.(3) |> Tsv.iter ~header:header5 begin function
+  Sys.argv.(4) |> Tsv.iter ~header:header5 begin function
    | [_uri; part5; en; _fr] ->
       let lang = int_of_alphaN part5 lor 0x8000 in
       lang5_set := Int_set.add lang !lang5_set
@@ -219,4 +250,6 @@ let () =
   gen_conversion "of_iso639p2b" (invert_map lang_to_lang2b);
   gen_conversion "to_iso639p1" lang_to_lang1;
   gen_conversion "of_iso639p1" (invert_map lang_to_lang1);
-  gen_scope_classifier "lang3_scope" !lang3_scope
+  gen_scope_classifier "lang3_scope" !lang3_scope_map;
+  gen_conversion "lang3_macrolanguage" !lang3_macrolanguage_map;
+  gen_one_to_many "lang3_macrolanguage_members" !lang3_macrolanguage_members_map

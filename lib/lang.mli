@@ -43,6 +43,13 @@ val scope : t -> [> `Individual | `Macro | `Special]
 (** [scope lang] is [`Individual] if [lang] is an individual language [`Macro]
     if [lang] is a macrolanguage, or [`Special] if [lang] is not a language. *)
 
+val macrolanguage : t -> t option
+(** [macrolanguage lang] is the macrolanguage including [lang], if any. *)
+
+val macrolanguage_members : t -> t list
+(** If [lang] is a macrolanguage, then [macrolanguage_members lang] is the list
+    of individual languages included in [lang], otherwise the empty list. *)
+
 (** {2 Conversions} *)
 
 val to_int : t -> int

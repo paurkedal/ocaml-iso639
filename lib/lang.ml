@@ -31,3 +31,12 @@ let to_lang_or_family = Lang_or_family.of_int_unsafe
 let of_string = of_part3_string
 
 let scope = Data.lang3_scope
+
+let macrolanguage lang =
+  let langM = Data.lang3_macrolanguage lang in
+  if langM = lang then None else Some langM
+
+let macrolanguage_members lang =
+  let s = Data.lang3_macrolanguage_members lang in
+  List.init (String.length s / 2)
+    (fun i -> Char.code s.[2*i] lsl 8 lor Char.code s.[2*i + 1])
