@@ -16,19 +16,34 @@
 
 (** Individual languages and macrolanguages as identified by ISO 639-3.
 
-    This module represents all languages which have a language code in ISO
-    639-3.  It provides and provides string conversions to and from language
-    codes defined in ISO 639-1, ISO 639-2, and ISO 639-3, where the former two
-    are only partially covered. *)
+    ISO 639-3 defines language codes for individual languages and
+    macrolanguages.  This module defines an abstract denotaion of these language
+    codes.  It provides partial conversions to and from language codes of ISO
+    639-1 and ISO 639-2, and one-to-one conversions to and from language codes
+    of ISO 639-3.
+
+    ISO 639-1 and 639-2 contains a subset of ISO 639-3 along with a subset of
+    ISO 639-5, so the correspondence is partial in both directions. *)
 
 type t
 (** A representation of languages present in ISO 639-3. *)
+
+(** {2 Basic Operations} *)
 
 val equal : t -> t -> bool
 (** Equality of the corresponding ISO 639-3 language codes. *)
 
 val compare : t -> t -> int
 (** Lexicographic order of the corresponding ISO 639-3 language codes. *)
+
+val pp : Format.formatter -> t -> unit
+(** [pp ppf lang] prints the ISO 639-3 language code of [lang] on [ppf]. *)
+
+val scope : t -> [> `Individual | `Macro | `Special]
+(** [scope lang] is [`Individual] if [lang] is an individual language [`Macro]
+    if [lang] is a macrolanguage, or [`Special] if [lang] is not a language. *)
+
+(** {2 Conversions} *)
 
 val to_int : t -> int
 (** An injective mapping to 16 bit integers. *)
@@ -40,30 +55,34 @@ val of_int_exn : int -> t
 (** The partial inverse of {!to_int}.
     @raise Invalid_argument if the argument is out of range. *)
 
+val to_lang_or_family : t -> Lang_or_family.t
+(** Injection into the combined ISO 639 type. *)
+
 val of_lang_or_family : Lang_or_family.t -> t option
 (** Restriction from the combined ISO 639 type. *)
 
-val to_lang_or_family : t -> Lang_or_family.t
-(** Injection into the combined ISO 639 type. *)
+(** {2 Language Code Conversions} *)
+
+val to_string : t -> string
+(** [to_string lang] is the ISO 639-3 language code of [lang]. *)
 
 val of_string : string -> t option
 (** [of_string s] is the language represented by the ISO 639-3 language code
     [s]. *)
 
-val to_string : t -> string
-(** [to_string lang] is the ISO 639-3 language code of [lang]. *)
-
-val of_part1_string : string -> t option
-(** [of_part1_string s] is the language represented by the ISO 639-1 language
-    code [s]. *)
+val is_part1 : t -> bool
+(** [is_part1 lang] is true iff [lang] is represented in ISO 639-1. *)
 
 val to_part1_string : t -> string option
 (** [to_part1_string lang] is the ISO 693-1 language code of [lang], if it
     exists. *)
 
-val of_part2_string : string -> t option
-(** [of_part2_string s] is the language represented by the ISO 639 part 2T or 2B
-    language code [s]. *)
+val of_part1_string : string -> t option
+(** [of_part1_string s] is the language represented by the ISO 639-1 language
+    code [s]. *)
+
+val is_part2 : t -> bool
+(** [is_part2 lang] is true iff [lang] is represented in ISO 639-2. *)
 
 val to_part2t_string : t -> string option
 (** [to_part2t_string lang] is the ISO 639-2T language code of [lang], if it
@@ -73,6 +92,6 @@ val to_part2b_string : t -> string option
 (** [to_part2b_string lang] is the ISO 639-2B language code of [lang], if it
     exists. *)
 
-val scope : t -> [> `Individual | `Macro | `Special]
-(** [scope lang] is [`Individual] if [lang] is an individual language [`Macro]
-    if [lang] is a macrolanguage, or [`Special] if [lang] is not a language. *)
+val of_part2_string : string -> t option
+(** [of_part2_string s] is the language represented by the ISO 639 part 2T or 2B
+    language code [s]. *)

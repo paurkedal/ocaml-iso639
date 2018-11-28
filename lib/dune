@@ -1,6 +1,7 @@
 (library
   (public_name iso639)
   (modules
+    Common
     Data
     Lang
     Lang_family

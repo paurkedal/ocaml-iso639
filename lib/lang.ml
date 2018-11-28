@@ -14,23 +14,20 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  *)
 
-include Lang_or_family
+include Common
 
-let of_lang_or_family lang = if is_part3 lang then Some lang else None
+let of_int lang =
+  if is_valid_part3 lang then Some lang else None
 
-let to_lang_or_family lang = lang
+let of_int_exn lang =
+  if is_valid_part3 lang then lang else failwith "Iso639.Lang.of_int_exn"
 
-let of_int i = match of_int i with None -> None | Some lang -> of_lang_or_family lang
+let of_lang_or_family lang =
+  let i = Lang_or_family.to_int lang in
+  if i < 0x8000 then Some i else None
 
-let of_int_exn i =
-  let lang = of_int_exn i in
-  if is_part3 lang then lang else failwith "Iso639.Lang.of_int_exn"
+let to_lang_or_family = Lang_or_family.of_int_unsafe
 
 let of_string = of_part3_string
 
-let to_string lang =
-  (match to_part3_string lang with
-   | Some s -> s
-   | None -> assert false)
-
-let scope lang = Data.lang3_scope (Lang_or_family.to_int lang)
+let scope = Data.lang3_scope
