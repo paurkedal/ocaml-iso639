@@ -30,3 +30,8 @@ let of_lang_or_family lang =
 let to_lang_or_family = Lang_or_family.of_int_unsafe
 
 let of_string = of_iso639p5
+
+let of_string_exn s =
+  (match of_iso639p5 s with
+   | None -> invalid_arg "Iso639.Lang_family.of_string_exn"
+   | Some lang -> lang)

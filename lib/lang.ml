@@ -30,6 +30,11 @@ let to_lang_or_family = Lang_or_family.of_int_unsafe
 
 let of_string = of_iso639p3
 
+let of_string_exn s =
+  (match of_iso639p3 s with
+   | None -> invalid_arg "Iso639.Lang.of_string_exn"
+   | Some lang -> lang)
+
 let scope = Data.lang3_scope
 
 let macrolanguage lang =

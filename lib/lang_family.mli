@@ -65,6 +65,10 @@ val of_string : string -> t option
 (** [of_string s] is the language family or group represented by the ISO 639-5
     code [s]. *)
 
+val of_string_exn : string -> t
+(** [of_string_exn s] is the language family or group represented by the ISO
+    639-5 code [s]. *)
+
 val is_iso639p1 : t -> bool
 (** [is_iso639p1 lang] is true iff [lang] is represented in ISO 639-1. *)
 
