@@ -23,8 +23,8 @@ let is_valid_part3 lang =
   lang < 0x8000 &&
   Char.code (Data.is_iso639p3_bits.[lang / 8]) lsr (lang mod 8) land 1 = 1
 
-let is_part1 x = Data.to_iso639p1 x <> x
-let is_part2 x = Data.is_iso639p2t x
+let is_iso639p1 x = Data.to_iso639p1 x <> x
+let is_iso639p2 x = Data.is_iso639p2t x
 
 let alpha_of_int x = Char.chr (x mod 32 + 0x60)
 
@@ -43,11 +43,11 @@ let to_string = alpha3_of_int
 
 let pp ppf lang = Format.pp_print_string ppf (to_string lang)
 
-let to_part1_string lang =
+let to_iso639p1 lang =
   let lang1 = Data.to_iso639p1 lang in
   if lang1 = lang then None else Some (alpha2_of_int lang1)
 
-let of_part1_string s =
+let of_iso639p1 s =
   if String.length s <> 2 then None else
   try
     let lang1 = int_of_alpha s.[0] lsl 5 + int_of_alpha s.[1] in
@@ -55,14 +55,14 @@ let of_part1_string s =
     if lang1 = lang3 then None else Some lang3
   with Not_found -> None
 
-let to_part2t_string lang =
+let to_iso639p2t lang =
   if Data.is_iso639p2t lang then Some (alpha3_of_int lang) else None
 
-let to_part2b_string lang =
+let to_iso639p2b lang =
   if Data.is_iso639p2t lang
   then Some (alpha3_of_int (Data.to_iso639p2b lang)) else None
 
-let of_part2_string s =
+let of_iso639p2 s =
   try
     let lang = Data.of_iso639p2b (int_of_alpha3 s) in
     let lang3 = lang land 0x8000 in
@@ -71,13 +71,13 @@ let of_part2_string s =
     None
   with Not_found -> None
 
-let of_part3_string s =
+let of_iso639p3 s =
   try
     let lang = int_of_alpha3 s in
     if is_valid_part3 lang then Some lang else None
   with Not_found -> None
 
-let of_part5_string s =
+let of_iso639p5 s =
   try
     let lang = int_of_alpha3 s lor 0x8000 in
     if Data.is_iso639p5 lang then Some lang else

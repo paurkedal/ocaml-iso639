@@ -80,52 +80,52 @@ val to_string : t -> string
     individual or macrolanguage and the 639-5 language code of [lang] if [lang]
     is a language group or family. *)
 
-val is_part1 : t -> bool
-(** [is_part1 lang] is true iff [lang] is represented in ISO 639-1. *)
+val is_iso639p1 : t -> bool
+(** [is_iso639p1 lang] is true iff [lang] is represented in ISO 639-1. *)
 
-val to_part1_string : t -> string option
-(** [to_part1_string lang] is the two-letter ISO 639-2 code for [lang] if it
+val to_iso639p1 : t -> string option
+(** [to_iso639p1 lang] is the two-letter ISO 639-2 code for [lang] if it
     exists. *)
 
-val of_part1_string : string -> t option
-(** [of_part1_string s] is the language represented by the ISO 639-1 language
+val of_iso639p1 : string -> t option
+(** [of_iso639p1 s] is the language represented by the ISO 639-1 language
     code [s]. *)
 
-val is_part2 : t -> bool
-(** [is_part2 lang] is true iff [lang] is represented in ISO 639-2. *)
+val is_iso639p2 : t -> bool
+(** [is_iso639p2 lang] is true iff [lang] is represented in ISO 639-2. *)
 
-val to_part2t_string : t -> string option
+val to_iso639p2t : t -> string option
 (** [to_part3t_string lang] is the three-letter ISO 639-2T code for [lang]. *)
 
-val to_part2b_string : t -> string option
+val to_iso639p2b : t -> string option
 (** [to_part3b_string lang] is the three-letter ISO 639-2B code for [lang]. *)
 
-val of_part2_string : string -> t option
-(** [of_part2_string s] is the language represented by the ISO 639 part 2T or 2B
+val of_iso639p2 : string -> t option
+(** [of_iso639p2 s] is the language represented by the ISO 639 part 2T or 2B
     language code [s]. *)
 
-val is_part3 : t -> bool
-(** [is_part3 lang] is true iff [lang] is represented in ISO 639-3, i.e. an
+val is_iso639p3 : t -> bool
+(** [is_iso639p3 lang] is true iff [lang] is represented in ISO 639-3, i.e. an
     individual language or macro language. *)
 
-val to_part3_string : t -> string option
-(** [to_part3_string lang] is the three-letter ISO 639-3 code for [lang].  The
+val to_iso639p3 : t -> string option
+(** [to_iso639p3 lang] is the three-letter ISO 639-3 code for [lang].  The
     result coincides with the ISO 639-2 code if it exist, and may clash with an
     ISO 639-5 code for a language group. *)
 
-val of_part3_string : string -> t option
+val of_iso639p3 : string -> t option
 (** [of_string s] is the language represented by the ISO 639-3 language code
     [s]. *)
 
-val is_part5 : t -> bool
-(** [is_part3 lang] is true iff [lang] is represented in ISO 693-5, i.e. a
+val is_iso639p5 : t -> bool
+(** [is_iso639p3 lang] is true iff [lang] is represented in ISO 693-5, i.e. a
     language family or group. *)
 
-val to_part5_string : t -> string option
-(** [to_part5_string lang] is the three-letter ISO 639-5 code for [lang].  The
+val to_iso639p5 : t -> string option
+(** [to_iso639p5 lang] is the three-letter ISO 639-5 code for [lang].  The
     result coincides with the ISO 639-2 code if it exist, and may clash with an
     ISO 639-3 code for an individual language or macrolanguage.  *)
 
-val of_part5_string : string -> t option
+val of_iso639p5 : string -> t option
 (** [of_string s] is the language family or group represented by the ISO 639-5
     code [s]. *)

@@ -25,8 +25,8 @@ let of_int_exn lang =
 
 let of_int_unsafe lang = lang
 
-let is_part3 x = x < 0x8000
-let is_part5 x = x >= 0x8000
+let is_iso639p3 x = x < 0x8000
+let is_iso639p5 x = x >= 0x8000
 
 let of_string s =
   try
@@ -34,10 +34,10 @@ let of_string s =
     if is_valid_part3 lang || Data.is_iso639p5 lang then Some lang else None
   with Not_found -> None
 
-let to_part3_string lang =
-  if is_part3 lang then Some (alpha3_of_int lang) else None
+let to_iso639p3 lang =
+  if is_iso639p3 lang then Some (alpha3_of_int lang) else None
 
-let to_part5_string lang =
-  if is_part5 lang then Some (alpha3_of_int lang) else None
+let to_iso639p5 lang =
+  if is_iso639p5 lang then Some (alpha3_of_int lang) else None
 
-let scope x = if is_part3 x then Data.lang3_scope x else `Collective
+let scope x = if is_iso639p3 x then Data.lang3_scope x else `Collective

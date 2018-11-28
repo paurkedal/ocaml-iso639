@@ -65,28 +65,28 @@ val of_string : string -> t option
 (** [of_string s] is the language family or group represented by the ISO 639-5
     code [s]. *)
 
-val is_part1 : t -> bool
-(** [is_part1 lang] is true iff [lang] is represented in ISO 639-1. *)
+val is_iso639p1 : t -> bool
+(** [is_iso639p1 lang] is true iff [lang] is represented in ISO 639-1. *)
 
-val to_part1_string : t -> string option
-(** [to_part1_string lang] is the ISO 693-1 language code of [lang], if it
+val to_iso639p1 : t -> string option
+(** [to_iso639p1 lang] is the ISO 693-1 language code of [lang], if it
     exists. *)
 
-val of_part1_string : string -> t option
-(** [of_part1_string s] is the language represented by the ISO 639-1 language
+val of_iso639p1 : string -> t option
+(** [of_iso639p1 s] is the language represented by the ISO 639-1 language
     code [s]. *)
 
-val is_part2 : t -> bool
-(** [is_part2 lang] is true iff [lang] is represented in ISO 639-2. *)
+val is_iso639p2 : t -> bool
+(** [is_iso639p2 lang] is true iff [lang] is represented in ISO 639-2. *)
 
-val to_part2t_string : t -> string option
-(** [to_part2t_string lang] is the ISO 639-2T language code of [lang], if it
+val to_iso639p2t : t -> string option
+(** [to_iso639p2t lang] is the ISO 639-2T language code of [lang], if it
     exists. *)
 
-val to_part2b_string : t -> string option
-(** [to_part2b_string lang] is the ISO 639-2B language code of [lang], if it
+val to_iso639p2b : t -> string option
+(** [to_iso639p2b lang] is the ISO 639-2B language code of [lang], if it
     exists. *)
 
-val of_part2_string : string -> t option
-(** [of_part2_string s] is the language represented by the ISO 639 part 2T or 2B
+val of_iso639p2 : string -> t option
+(** [of_iso639p2 s] is the language represented by the ISO 639 part 2T or 2B
     language code [s]. *)

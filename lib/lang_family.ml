@@ -29,4 +29,4 @@ let of_lang_or_family lang =
 
 let to_lang_or_family = Lang_or_family.of_int_unsafe
 
-let of_string = of_part5_string
+let of_string = of_iso639p5
