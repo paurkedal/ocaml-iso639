@@ -8,7 +8,7 @@ doc: "http://paurkedal.github.io/ocaml-iso639/index.html"
 bug-reports: "https://github.com/paurkedal/ocaml-iso639/issues"
 depends: [
   "ocaml"
-  "dune"
+  "dune" {build}
   "ocamlfind" {build}
 ]
 build: [
