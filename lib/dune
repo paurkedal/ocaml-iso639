@@ -11,6 +11,7 @@
 (rule
   (targets data.ml)
   (deps
+    manifest.txt
     (:tab2 iso-639-2.txt)
     (:tab3 iso-639-3.tsv)
     (:tab3m iso-639-3-macrolanguages.tsv)
@@ -54,3 +55,15 @@
   (action
     (run wget --quiet -O %{targets}
       "http://id.loc.gov/vocabulary/iso639-5.tsv")))
+
+; Data manifest
+(rule
+  (mode promote)
+  (targets manifest.txt)
+  (deps
+    iso-639-2.txt
+    iso-639-3.tsv
+    iso-639-3-macrolanguages.tsv
+    iso-639-3-retirements.tsv
+    iso-639-5.tsv)
+  (action (with-stdout-to %{targets} (run sha256sum %{deps}))))
