@@ -41,7 +41,14 @@ let macrolanguage lang =
   let langM = Data.lang3_macrolanguage lang in
   if langM = lang then None else Some langM
 
+let list_init n f = (* List.init was introduced in OCaml 4.06.0 *)
+  let rec loop n acc =
+    if n = 0 then acc else
+    loop (n - 1) (f (n - 1) :: acc)
+  in
+  loop n []
+
 let macrolanguage_members lang =
   let s = Data.lang3_macrolanguage_members lang in
-  List.init (String.length s / 2)
+  list_init (String.length s / 2)
     (fun i -> Char.code s.[2*i] lsl 8 lor Char.code s.[2*i + 1])

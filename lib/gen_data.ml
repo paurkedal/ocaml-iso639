@@ -18,7 +18,13 @@ open Printf
 
 module Int_order = struct type t = int let compare = compare end
 module Int_set = Set.Make (Int_order)
-module Int_map = Map.Make (Int_order)
+module Int_map = struct
+  include Map.Make (Int_order)
+  let update k f m =
+    (match (try f (Some (find k m)) with Not_found -> f None) with
+     | None -> m
+     | Some v -> add k v m)
+end
 
 let invert_map m = Int_map.fold (fun k v -> Int_map.add v k) m Int_map.empty
 
