@@ -28,36 +28,36 @@ let check_lang_family lang =
                             lang)
 
 let check_alpha2 p1_count alpha2 =
-  (match Lang_or_family.of_part1_string alpha2 with
+  (match Lang_or_family.of_iso639p1 alpha2 with
    | Some lang ->
       incr p1_count;
-      assert (Lang_or_family.to_part1_string lang = Some alpha2)
+      assert (Lang_or_family.to_iso639p1 lang = Some alpha2)
    | None -> ())
 
 let check_alpha3 p2_count p3_count p5_count alpha3 =
   let langI = Lang.of_string alpha3 in
-  let lang3 = Lang_or_family.of_part3_string alpha3 in
+  let lang3 = Lang_or_family.of_iso639p3 alpha3 in
   let langF = Lang_family.of_string alpha3 in
-  let lang5 = Lang_or_family.of_part5_string alpha3 in
+  let lang5 = Lang_or_family.of_iso639p5 alpha3 in
   (match langI, lang3, langF, lang5 with
    | None, None, None ,None -> ()
    | Some langI, Some lang3, None, None ->
       incr p3_count;
-      assert (Lang_or_family.to_part3_string lang3 = Some alpha3);
+      assert (Lang_or_family.to_iso639p3 lang3 = Some alpha3);
       assert (Lang_or_family.scope lang3 <> `Collective);
       assert (Lang_or_family.equal (Lang.to_lang_or_family langI) lang3);
       check_lang langI
    | None, None, Some langF, Some lang5 ->
       incr p5_count;
-      assert (Lang_or_family.to_part5_string lang5 = Some alpha3);
+      assert (Lang_or_family.to_iso639p5 lang5 = Some alpha3);
       assert (Lang_or_family.scope lang5 = `Collective);
       assert (Lang_or_family.equal (Lang_family.to_lang_or_family langF) lang5);
       check_lang_family langF
    | _ -> assert false);
-  (match Lang_or_family.of_part2_string alpha3 with
+  (match Lang_or_family.of_iso639p2 alpha3 with
    | Some lang2 ->
-      let alpha_p2t = Lang_or_family.to_part2t_string lang2 in
-      let alpha_p2b = Lang_or_family.to_part2b_string lang2 in
+      let alpha_p2t = Lang_or_family.to_iso639p2t lang2 in
+      let alpha_p2b = Lang_or_family.to_iso639p2b lang2 in
       let is_bib =
         (match alpha_p2t, alpha_p2b with
          | None, None -> assert false
@@ -77,7 +77,7 @@ let check_alpha3 p2_count p3_count p5_count alpha3 =
 let check_scope () =
   let chk langI scope =
     let lang =
-      (match Lang_or_family.of_part3_string langI with
+      (match Lang_or_family.of_iso639p3 langI with
        | Some lang -> lang
        | None -> assert false) in
     assert (Lang_or_family.scope lang = scope) in
