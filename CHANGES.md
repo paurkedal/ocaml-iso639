@@ -1,3 +1,8 @@
+## v0.0.3 - 2019-03-24
+
+- Keep track of external data files using a Git-tracked manifest.
+- Update data.
+
 ## v0.0.2 - 2018-11-28
 
 - Split API into three modules corresponding to ISO 639-3, ISO 639-5 and
