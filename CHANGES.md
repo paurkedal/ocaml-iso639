@@ -1,4 +1,9 @@
-## v0.0.3 - 2019-03-24
+## v0.0.4 - 2019-03-24
+
+- Fix test.
+- Extend compatibility back to OCaml 4.04.2.
+
+## v0.0.3 - 2019-03-24 (bad)
 
 - Keep track of external data files using a Git-tracked manifest.
 - Update data.
