@@ -14,24 +14,24 @@ covered by ISO 639 and provides related functionality and conversions.
 ## Example
 
 ```ocaml
-utop # #require "iso639";;
-utop # open Iso639;;
-utop # #install_printer Lang.pp;;
+# #require "iso639";;
+# open Iso639;;
+# #install_printer Lang.pp;;
 
-utop # let por = Lang.of_string_exn "por";;
+# let por = Lang.of_string_exn "por";;
 val por : Lang.t = por
-utop # Lang.to_iso639p1 por;;
+# Lang.to_iso639p1 por;;
 - : string option = Some "pt"
-utop # Lang.macrolanguage por;;
+# Lang.macrolanguage por;;
 - : Lang.t option = None
-utop # Lang.macrolanguage_members por;;
+# Lang.macrolanguage_members por;;
 - : Lang.t list = []
 
-utop # let nor = Lang.of_string_exn "nor";;
+# let nor = Lang.of_string_exn "nor";;
 val nor : Lang.t = nor
-utop # Lang.macrolanguage_members nor;;
+# Lang.macrolanguage_members nor;;
 - : Lang.t list = [nob; nno]
-utop # Lang.macrolanguage (Lang.of_string_exn "nob");;
+# Lang.macrolanguage (Lang.of_string_exn "nob");;
 - : Lang.t option = Some nor
 ```
 
