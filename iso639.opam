@@ -9,7 +9,6 @@ bug-reports: "https://github.com/paurkedal/ocaml-iso639/issues"
 depends: [
   "ocaml" {>= "4.04.2"}
   "dune" {build}
-  "ocamlfind" {build}
 ]
 build: [
   ["dune" "build" "-p" name "-j" jobs]
