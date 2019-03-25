@@ -17,6 +17,12 @@
 open Iso639
 open Printf
 
+let failwith_f ppf = Format.kasprintf failwith ppf
+
+let pp_opt f ppf = function
+ | None -> Format.pp_print_string ppf "None"
+ | Some x -> Format.fprintf ppf "Some (%a)" f x
+
 let check_lang lang =
   assert (Lang.equal (Lang.of_int_exn (Lang.to_int lang)) lang);
   (match Lang.of_string (Lang.to_string lang) with
@@ -40,7 +46,7 @@ let check_alpha3 p2_count p3_count p5_count alpha3 =
   let langF = Lang_family.of_string alpha3 in
   let lang5 = Lang_or_family.of_iso639p5 alpha3 in
   (match langI, lang3, langF, lang5 with
-   | None, None, None ,None -> ()
+   | None, None, None, None -> ()
    | Some langI, Some lang3, None, None ->
       incr p3_count;
       assert (Lang_or_family.to_iso639p3 lang3 = Some alpha3);
@@ -53,15 +59,24 @@ let check_alpha3 p2_count p3_count p5_count alpha3 =
       assert (Lang_or_family.scope lang5 = `Collective);
       assert (Lang_or_family.equal (Lang_family.to_lang_or_family langF) lang5);
       check_lang_family langF
-   | _ -> assert false);
+   | _ ->
+      failwith_f "Inconsistent lookups for %s: %a ~ %a; %a ~ %a"
+        alpha3
+        (pp_opt Lang.pp) langI (pp_opt Lang_or_family.pp) lang3
+        (pp_opt Lang_family.pp) langF (pp_opt Lang_or_family.pp) lang5);
   (match Lang_or_family.of_iso639p2 alpha3 with
    | Some lang2 ->
       let alpha_p2t = Lang_or_family.to_iso639p2t lang2 in
       let alpha_p2b = Lang_or_family.to_iso639p2b lang2 in
       let is_bib =
         (match alpha_p2t, alpha_p2b with
-         | None, None -> assert false
-         | None, Some _ | Some _, None -> assert false
+         | None, None ->
+            failwith_f "ISO-639-2 family %S did not convert to 2T or 2B code."
+              alpha3
+         | None, Some _ ->
+            failwith_f "ISO-639-2 family %S did not convert to 2T code." alpha3
+         | Some _, None ->
+            failwith_f "ISO-639-2 family %S did not convert to 2B code." alpha3
          | Some p2t, Some p2b ->
             incr p2_count;
             assert (p2t = alpha3 || p2b = alpha3);
