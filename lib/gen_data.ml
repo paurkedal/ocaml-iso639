@@ -66,7 +66,7 @@ end
 let warn fmt = ksprintf (fun msg -> prerr_endline ("Warning: " ^ msg)) fmt
 
 let gen_is_iso639p3_bits lang3_set =
-  let is_iso639p3_bits = Bytes.create 4096 in
+  let is_iso639p3_bits = Bytes.make 4096 '\x00' in
   lang3_set |> Int_set.iter begin function lang ->
     let i = lang / 8 in
     let bits = Char.code (Bytes.get is_iso639p3_bits i) in
