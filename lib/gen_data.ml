@@ -1,4 +1,4 @@
-(* Copyright (C) 2018  Petter A. Urkedal <paurkedal@gmail.com>
+(* Copyright (C) 2018--2021  Petter A. Urkedal <paurkedal@gmail.com>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -45,15 +45,19 @@ module Tsv = struct
     let line = trim_cr (trim_bom (input_line ic)) in
     String.split_on_char sep line
 
-  let iter ?sep ?header f fp =
+  let iteri ?sep ?header f fp =
     let ic = open_in fp in
     try
       (match header with
        | Some header ->
           let row0 = read_row ?sep ic in
-          assert (row0 = header)
+          if row0 <> header then begin
+            eprintf "%s:1: Unexpected header.\n%!" fp;
+            exit 65
+          end
        | None -> ());
-      while true do f (read_row ?sep ic) done
+      let rec loop lnum = f lnum (read_row ?sep ic); loop (lnum + 1) in
+      loop 2
     with
      | End_of_file -> close_in ic
      | exn -> close_in ic; raise exn
@@ -160,8 +164,9 @@ let () =
   let lang3_macrolanguage_members_map = ref Int_map.empty in
 
   (* Load ISO-639-3 Data *)
-  Sys.argv.(2) |> Tsv.iter ~header:header3 begin function
-   | [lang3; lang2b; lang2t; lang1; scope; language_type; ref_name; comment] ->
+  Sys.argv.(2) |> Tsv.iteri ~header:header3 begin fun lnum -> function
+   | lang3 :: lang2b :: lang2t :: lang1 :: scope :: language_type :: ref_name
+           :: comment :: litter when List.for_all ((=) "") litter ->
       let lang3 = int_of_alphaN lang3 in
       lang3_set := Int_set.add lang3 !lang3_set;
       (match int_option_of_alphaN lang2t, int_option_of_alphaN lang2b with
@@ -179,14 +184,16 @@ let () =
        | "S" -> lang3_scope_map := Int_map.add lang3 `Special !lang3_scope_map
        | "M" -> lang3_scope_map := Int_map.add lang3 `Macro !lang3_scope_map
        | _ -> assert false)
-   | _ -> assert false
+   | _ ->
+      eprintf "%s:%d: Wrong number of columns.\n%!" Sys.argv.(2) lnum;
+      exit 65
   end;
   let lang3_scope lang =
     (match Int_map.find lang !lang3_scope_map with
      | exception Not_found -> `Individual
      | `Special -> `Special | `Macro -> `Macro)
   in
-  Sys.argv.(3) |> Tsv.iter ~header:header3m begin function
+  Sys.argv.(3) |> Tsv.iteri ~header:header3m begin fun lnum -> function
    | [sM; sI; ("A" | "R")] ->
       let langM = int_of_alphaN sM in
       let langI = int_of_alphaN sI in
@@ -198,20 +205,24 @@ let () =
       let aux = function None -> Some [langI] | Some xs -> Some (langI :: xs) in
       lang3_macrolanguage_members_map :=
         Int_map.update langM aux !lang3_macrolanguage_members_map
-   | _ -> assert false
+   | _ ->
+      eprintf "%s:%d: Wrong number of columns.\n%!" Sys.argv.(2) lnum;
+      exit 65
   end;
 
   (* Load ISO-639-5 Data *)
-  Sys.argv.(4) |> Tsv.iter ~header:header5 begin function
+  Sys.argv.(4) |> Tsv.iteri ~header:header5 begin fun lnum -> function
    | [_uri; part5; en; _fr] ->
       let lang = int_of_alphaN part5 lor 0x8000 in
       lang5_set := Int_set.add lang !lang5_set
-   | _ -> assert false
+   | _ ->
+      eprintf "%s:%d: Wrong number of columns.\n%!" Sys.argv.(2) lnum;
+      exit 65
   end;
   let lang5_set = !lang5_set in
 
   (* Load ISO-639-2 Data *)
-  Sys.argv.(1) |> Tsv.iter ~sep:'|' begin function
+  Sys.argv.(1) |> Tsv.iteri ~sep:'|' begin fun lnum -> function
    | ["qaa-qtz"; _; _; _; _] -> ()
    | [lang2b; lang2t; lang1; _label_en; _label_fr] ->
       let lang2b = int_of_alphaN lang2b in
@@ -232,7 +243,9 @@ let () =
        | Some lang2b ->
           lang_to_lang2b_v2 := Int_map.add lang2t lang2b !lang_to_lang2b_v2
        | None -> ())
-   | _ -> assert false
+   | _ ->
+      eprintf "%s:%d: Wrong number of columns.\n%!" Sys.argv.(2) lnum;
+      exit 65
   end;
 
   let lang3_set = !lang3_set in
